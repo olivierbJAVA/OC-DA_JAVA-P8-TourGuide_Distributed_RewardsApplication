@@ -5,17 +5,13 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
-import java.util.stream.IntStream;
 
 import gpsUtil.location.Location;
 import org.apache.commons.lang3.time.StopWatch;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import gpsUtil.GpsUtil;
@@ -27,7 +23,7 @@ import tourGuide.helper.InternalTestHelper;
 import tourGuide.service.RewardsService;
 import tourGuide.service.TourGuideService;
 import tourGuide.user.User;
-import tourGuide.user.UserReward;
+import utils.TourGuideTestUtil;
 
 public class TestPerformance {
 	
@@ -57,6 +53,7 @@ public class TestPerformance {
 		//Added to fix NumberFormatException due to decimal number separator
 		Locale.setDefault(new Locale("en", "US"));
 
+		// ARRANGE
 		// Users should be incremented up to 100,000, and test finishes within 15 minutes
 		InternalTestHelper.setInternalUserNumber(100000);
 
@@ -76,6 +73,7 @@ public class TestPerformance {
 		StopWatch stopWatch = new StopWatch();
 		stopWatch.start();
 
+		// ACT
 		//DEBUT_VERSION_AMELIOREE
 		ForkJoinPool forkJoinPool = new ForkJoinPool(100);
 
@@ -99,6 +97,7 @@ public class TestPerformance {
 
 		//tourGuideService.tracker.stopTracking();
 
+		// ASSERT
 		System.out.println("highVolumeTrackLocation: Time Elapsed: " + TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()) + " seconds.");
 		assertTrue(TimeUnit.MINUTES.toSeconds(15) >= TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()));
 		assertTrue(result);
@@ -110,6 +109,7 @@ public class TestPerformance {
 		//Added to fix NumberFormatException due to decimal number separator
 		Locale.setDefault(new Locale("en", "US"));
 
+		// ARRANGE
 		// Users should be incremented up to 100,000, and test finishes within 20 minutes
 		InternalTestHelper.setInternalUserNumber(100000);
 
@@ -123,7 +123,7 @@ public class TestPerformance {
 		GpsUtil gpsUtil = new GpsUtil();
 		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
 
-		VisitedLocation visitedLocationRandom = new VisitedLocation(new UUID(1,1), new Location(generateRandomLatitude(), generateRandomLongitude()), getRandomTime());
+		VisitedLocation visitedLocationRandom = new VisitedLocation(UUID.randomUUID(), new Location(TourGuideTestUtil.generateRandomLatitude(), TourGuideTestUtil.generateRandomLongitude()), TourGuideTestUtil.getRandomTime());
 
 		TourGuideService mockTourGuideService = Mockito.spy(new TourGuideService(gpsUtil,rewardsService));
 
@@ -138,6 +138,7 @@ public class TestPerformance {
 		StopWatch stopWatch = new StopWatch();
 		stopWatch.start();
 
+		// ACT
 		//DEBUT_VERSION_AMELIOREE
 		ForkJoinPool forkJoinPool = new ForkJoinPool(100);
 
@@ -162,6 +163,7 @@ public class TestPerformance {
 
 		stopWatch.stop();
 
+		// ASSERT
 		for(User user : allUsers) {
 			assertTrue(user.getUserRewards().size() > 0);
 		}
@@ -177,6 +179,7 @@ public class TestPerformance {
 		//Added to fix NumberFormatException due to decimal number separator
 		Locale.setDefault(new Locale("en", "US"));
 
+		// ARRANGE
 		// Users should be incremented up to 100,000, and test finishes within 15 minutes
 		InternalTestHelper.setInternalUserNumber(100000);
 
@@ -196,6 +199,7 @@ public class TestPerformance {
 
 		ForkJoinPool forkJoinPool = new ForkJoinPool(100);
 
+		// ACT
 		allUsers.forEach((user)-> {
 			CompletableFuture
 					.runAsync(()->tourGuideService.trackUserLocation(user), forkJoinPool)
@@ -206,26 +210,10 @@ public class TestPerformance {
 
 		stopWatch.stop();
 
+		// ASSERT
 		System.out.println("highVolumeTrackLocation: Time Elapsed: " + TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()) + " seconds.");
 		assertTrue(TimeUnit.MINUTES.toSeconds(15) >= TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()));
 		assertTrue(result);
-	}
-
-	private double generateRandomLongitude() {
-		double leftLimit = -180;
-		double rightLimit = 180;
-		return leftLimit + new Random().nextDouble() * (rightLimit - leftLimit);
-	}
-
-	private double generateRandomLatitude() {
-		double leftLimit = -85.05112878;
-		double rightLimit = 85.05112878;
-		return leftLimit + new Random().nextDouble() * (rightLimit - leftLimit);
-	}
-
-	private Date getRandomTime() {
-		LocalDateTime localDateTime = LocalDateTime.now().minusDays(new Random().nextInt(30));
-		return Date.from(localDateTime.toInstant(ZoneOffset.UTC));
 	}
 
 }
