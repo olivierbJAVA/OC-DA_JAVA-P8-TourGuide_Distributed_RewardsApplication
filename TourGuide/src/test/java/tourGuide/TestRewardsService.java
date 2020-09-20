@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 import org.junit.Ignore;
@@ -23,6 +24,9 @@ public class TestRewardsService {
 
 	@Test
 	public void userGetRewards() {
+		//Added to fix NumberFormatException due to decimal number separator
+		Locale.setDefault(new Locale("en", "US"));
+
 		GpsUtil gpsUtil = new GpsUtil();
 		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
 
