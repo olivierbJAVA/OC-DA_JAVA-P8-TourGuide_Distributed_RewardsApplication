@@ -46,7 +46,7 @@ public class TourGuideService {
 			initializeInternalUsers();
 			logger.debug("Finished initializing users");
 		}
-		tracker = new Tracker(this);
+		tracker = new Tracker(this, rewardsService);
 		addShutDownHook();
 	}
 	
@@ -84,9 +84,11 @@ public class TourGuideService {
 	}
 	
 	public VisitedLocation trackUserLocation(User user) {
+		//System.out.println("Track Location - Thread : " + Thread.currentThread().getName() + " - User : " + user.getUserName());
+
 		VisitedLocation visitedLocation = gpsUtil.getUserLocation(user.getUserId());
 		user.addToVisitedLocations(visitedLocation);
-		rewardsService.calculateRewards(user);
+		//rewardsService.calculateRewards(user);
 		return visitedLocation;
 	}
 
