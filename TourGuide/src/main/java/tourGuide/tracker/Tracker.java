@@ -13,7 +13,7 @@ import tourGuide.user.User;
 
 public class Tracker extends Thread {
 	private Logger logger = LoggerFactory.getLogger(Tracker.class);
-	private static final long trackingPollingInterval = TimeUnit.MINUTES.toSeconds(1);//initial = 1
+	private static final long trackingPollingInterval = TimeUnit.MINUTES.toSeconds(1);//initial = 5
 	private final ExecutorService executorService = Executors.newSingleThreadExecutor();
 	//private final ExecutorService executorService = Executors.newFixedThreadPool(10);
 	private final TourGuideService tourGuideService;
@@ -183,12 +183,12 @@ public class Tracker extends Thread {
 						.thenAccept(unused->rewardsService.calculateRewards(user));
 			});
 
+			//Optional : in case you want to wait for the completion of track users and calculate rewards before Tracker sleeping
 			forkJoinPool.awaitQuiescence(10,TimeUnit.MINUTES);
 
 			//ForkJoinPool.commonPool().awaitQuiescence(10,TimeUnit.MINUTES);
 
 			// FIN_VERSION_AMELIOREE
-
 
 			stopWatch.stop();
 			logger.debug("Tracker Time Elapsed: " + TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()) + " seconds."); 
@@ -199,6 +199,15 @@ public class Tracker extends Thread {
 			} catch (InterruptedException e) {
 				break;
 			}
+
+			/*
+			boolean result = forkJoinPool.awaitQuiescence(1,TimeUnit.MINUTES);
+			if(result) {
+				logger.debug("Tracking done in trackingPollingInterval");
+			} else {
+				logger.debug("Warning : Tracking last more than trackingPollingInterval ");
+			}
+			*/
 		}
 		
 	}
