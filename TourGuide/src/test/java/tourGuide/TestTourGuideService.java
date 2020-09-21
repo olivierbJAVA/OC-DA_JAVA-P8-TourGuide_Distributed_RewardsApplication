@@ -3,10 +3,10 @@ package tourGuide;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import java.util.List;
-import java.util.Locale;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
+import gpsUtil.location.Location;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -14,6 +14,7 @@ import gpsUtil.GpsUtil;
 import gpsUtil.location.Attraction;
 import gpsUtil.location.VisitedLocation;
 import rewardCentral.RewardCentral;
+import tourGuide.attraction.NearbyAttraction;
 import tourGuide.helper.InternalTestHelper;
 import tourGuide.service.RewardsService;
 import tourGuide.service.TourGuideService;
@@ -152,8 +153,7 @@ public class TestTourGuideService {
 		
 		assertEquals(user.getUserId(), visitedLocation.userId);
 	}
-	
-	@Ignore // Not yet implemented
+
 	@Test
 	public void getNearbyAttractions() {
 		//Added to fix NumberFormatException due to decimal number separator
@@ -169,15 +169,102 @@ public class TestTourGuideService {
 		tourGuideService.tracker.stopTracking();
 
 		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourGuide.com");
-		VisitedLocation visitedLocation = tourGuideService.trackUserLocation(user);
+
+		VisitedLocation visitedLocation = new VisitedLocation(user.getUserId(), new Location(47.305969D, 71.710449D), new Date());
+
+		List<NearbyAttraction> nearbyAttractionsExpected = new ArrayList<>();
+
+		NearbyAttraction nearbyAttraction1 = new NearbyAttraction("McKinley Tower", new Location(61.218887D, -149.877502D), new Location(47.305969D, 71.710449D), 4586.179236787266D, rewardsService.getRewardPoints(new Attraction("McKinley Tower", "Anchorage", "AK", 61.218887D, -149.877502D), user));
+		NearbyAttraction nearbyAttraction2 = new NearbyAttraction("Franklin Park Zoo", new Location(42.302601D, -71.086731D), new Location(47.305969D, 71.710449D), 5836.916287407119D, rewardsService.getRewardPoints(new Attraction("Franklin Park Zoo", "Boston", "MA", 42.302601D, -71.086731D), user));
+		NearbyAttraction nearbyAttraction3 = new NearbyAttraction("Bronx Zoo", new Location(40.852905D, -73.872971D), new Location(47.305969D, 71.710449D), 5985.996919050997D, rewardsService.getRewardPoints(new Attraction("Bronx Zoo", "Bronx", "NY", 40.852905D, -73.872971D), user));
+		NearbyAttraction nearbyAttraction4 = new NearbyAttraction("Flatiron Building", new Location(40.741112D, -73.989723D), new Location(47.305969D, 71.710449D), 5995.465468529265, rewardsService.getRewardPoints(new Attraction("Flatiron Building", "New York City", "NY", 40.741112D, -73.989723D), user));
+		NearbyAttraction nearbyAttraction5 = new NearbyAttraction("Jackson Hole", new Location(43.582767D, -110.821999D), new Location(47.305969D, 71.710449D), 6150.946648899067D, rewardsService.getRewardPoints(new Attraction("Jackson Hole", "Jackson Hole", "WY", 43.582767D, -110.821999D), user));
+		nearbyAttractionsExpected.add(nearbyAttraction1);
+		nearbyAttractionsExpected.add(nearbyAttraction2);
+		nearbyAttractionsExpected.add(nearbyAttraction3);
+		nearbyAttractionsExpected.add(nearbyAttraction4);
+		nearbyAttractionsExpected.add(nearbyAttraction5);
 
 		// ACT
-		List<Attraction> attractions = tourGuideService.getNearByAttractions(visitedLocation);
-		
+		List<NearbyAttraction> nearbyAttractionsActual = tourGuideService.getNearByAttractions(visitedLocation, user);
+
 		//tourGuideService.tracker.stopTracking();
 
 		// ASSERT
-		assertEquals(5, attractions.size());
+		assertEquals(5, nearbyAttractionsActual.size());
+
+		for (int j=0; j<5; j++) {
+			assertEquals(nearbyAttractionsExpected.get(j).getAttractionName(), nearbyAttractionsActual.get(j).getAttractionName());
+			assertEquals(nearbyAttractionsExpected.get(j).getAttractionLocation().latitude, nearbyAttractionsActual.get(j).getAttractionLocation().latitude, 0);
+			assertEquals(nearbyAttractionsExpected.get(j).getAttractionLocation().longitude, nearbyAttractionsActual.get(j).getAttractionLocation().longitude, 0);
+			assertEquals(nearbyAttractionsExpected.get(j).getUserLocation().latitude, nearbyAttractionsActual.get(j).getUserLocation().latitude, 0);
+			assertEquals(nearbyAttractionsExpected.get(j).getUserLocation().longitude, nearbyAttractionsActual.get(j).getUserLocation().longitude, 0);
+			assertEquals(nearbyAttractionsExpected.get(j).getDistanceAttractionUserLocation(), nearbyAttractionsActual.get(j).getDistanceAttractionUserLocation(), 0);
+		}
+	}
+
+	@Test
+	public void getNearbyAttractionsOtherVersion() {
+		//Added to fix NumberFormatException due to decimal number separator
+		Locale.setDefault(new Locale("en", "US"));
+
+		// ARRANGE
+		GpsUtil gpsUtil = new GpsUtil();
+		RewardCentral rewardCentral = new RewardCentral();
+		RewardsService rewardsService = new RewardsService(gpsUtil, rewardCentral);
+		InternalTestHelper.setInternalUserNumber(0);
+		TourGuideService tourGuideService = new TourGuideService(gpsUtil, rewardsService);
+
+		tourGuideService.tracker.stopTracking();
+
+		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourGuide.com");
+		VisitedLocation visitedLocation = tourGuideService.trackUserLocation(user);
+
+		List<Attraction> allAttractions = gpsUtil.getAttractions();
+
+		TreeMap<Double, NearbyAttraction> treeAttractionDistance = new TreeMap<>();
+		allAttractions.forEach(attraction -> treeAttractionDistance.put(rewardsService.getDistance(attraction, visitedLocation.location), new NearbyAttraction( attraction.attractionName, new Location(attraction.latitude, attraction.longitude), visitedLocation.location, rewardsService.getDistance(attraction, visitedLocation.location), rewardsService.getRewardPoints(attraction, user))));
+
+		System.out.println("User location : lat = " + visitedLocation.location.latitude + " - long = " + visitedLocation.location.longitude);
+
+		// Print for help
+		for (Map.Entry<Double, NearbyAttraction> entry : treeAttractionDistance.entrySet()) {
+			System.out.println("AllAttractions - Key: " + entry.getKey() + ". Value: " + entry.getValue().getAttractionName());
+		}
+
+		List<NearbyAttraction> nearbyAttractionsExpected = treeAttractionDistance.values().stream()
+				.limit(5)
+				.collect(Collectors.toList());
+
+		/*
+		TreeMap<Double, NearbyAttraction> treeAttractionDistanceLimitedToFive = treeAttractionDistance.entrySet().stream()
+				.limit(5)
+				.collect(TreeMap::new, (m, e) -> m.put(e.getKey(), e.getValue()), Map::putAll);
+
+		// Print for help
+		for (Map.Entry<Double, NearbyAttraction> entry : treeAttractionDistanceLimitedToFive.entrySet()) {
+			System.out.println("LimitedTo5 - Key: " + entry.getKey() + ". Value: " + entry.getValue().getAttractionName());
+		}
+		*/
+		// ACT
+		List<NearbyAttraction> nearbyAttractionsActual = tourGuideService.getNearByAttractions(visitedLocation, user);
+
+		// Print for help
+		nearbyAttractionsActual.forEach( (nearbyAttraction)->System.out.println(nearbyAttraction.getAttractionName()) );
+
+		//tourGuideService.tracker.stopTracking();
+
+		// ASSERT
+		assertEquals(5, nearbyAttractionsActual.size());
+
+		for (int j=0; j<5; j++) {
+			assertEquals(nearbyAttractionsExpected.get(j).getAttractionName(), nearbyAttractionsActual.get(j).getAttractionName());
+			assertEquals(nearbyAttractionsExpected.get(j).getAttractionLocation().latitude, nearbyAttractionsActual.get(j).getAttractionLocation().latitude, 0);
+			assertEquals(nearbyAttractionsExpected.get(j).getAttractionLocation().longitude, nearbyAttractionsActual.get(j).getAttractionLocation().longitude, 0);
+			assertEquals(nearbyAttractionsExpected.get(j).getUserLocation().latitude, nearbyAttractionsActual.get(j).getUserLocation().latitude, 0);
+			assertEquals(nearbyAttractionsExpected.get(j).getUserLocation().longitude, nearbyAttractionsActual.get(j).getUserLocation().longitude, 0);
+			assertEquals(nearbyAttractionsExpected.get(j).getDistanceAttractionUserLocation(), nearbyAttractionsActual.get(j).getDistanceAttractionUserLocation(), 0);
+		}
 	}
 
 	@Test
