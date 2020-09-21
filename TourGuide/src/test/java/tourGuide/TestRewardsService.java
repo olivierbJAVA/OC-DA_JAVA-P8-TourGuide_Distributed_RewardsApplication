@@ -40,7 +40,7 @@ public class TestRewardsService {
 		user.addToVisitedLocations(new VisitedLocation(user.getUserId(), attraction, new Date()));
 
 		// ACT
-		//we call calculateRewards instead of trackUserLocation
+		//We call calculateRewards instead of trackUserLocation
 		//tourGuideService.trackUserLocation(user);
 		rewardsService.calculateRewards(user);
 
