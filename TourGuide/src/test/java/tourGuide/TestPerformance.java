@@ -173,6 +173,7 @@ public class TestPerformance {
 		assertTrue(result);
 	}
 
+	// New test added : highVolumeTrackLocationAndGetRewards in actual conditions
 	//@Ignore
 	@Test
 	public void highVolumeTrackLocationAndGetRewards() {
