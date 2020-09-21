@@ -2,13 +2,7 @@ package tourGuide.service;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -20,6 +14,8 @@ import gpsUtil.GpsUtil;
 import gpsUtil.location.Attraction;
 import gpsUtil.location.Location;
 import gpsUtil.location.VisitedLocation;
+import org.w3c.dom.Attr;
+import tourGuide.attraction.NearbyAttraction;
 import tourGuide.helper.InternalTestHelper;
 import tourGuide.tracker.Tracker;
 import tourGuide.user.User;
@@ -92,14 +88,37 @@ public class TourGuideService {
 		return visitedLocation;
 	}
 
-	public List<Attraction> getNearByAttractions(VisitedLocation visitedLocation) {
-		List<Attraction> nearbyAttractions = new ArrayList<>();
-		for(Attraction attraction : gpsUtil.getAttractions()) {
-			if(rewardsService.isWithinAttractionProximity(attraction, visitedLocation.location)) {
-				nearbyAttractions.add(attraction);
-			}
-		}
-		
+	public List<NearbyAttraction> getNearByAttractions(VisitedLocation visitedLocation, User user) {
+		List<NearbyAttraction> nearbyAttractions = new ArrayList<>();
+
+		List<Attraction> allAttractions = gpsUtil.getAttractions();
+
+		// VERSION_1
+		/*
+		allAttractions.stream()
+					.map(attraction->rewardsService.getDistance(attraction, visitedLocation.location ))
+					.sorted()
+					.limit(5)
+					.forEach( nearbyAttractionsDistance ->  {
+							allAttractions.stream()
+							.forEach( attraction -> {
+								if (rewardsService.getDistance(attraction, visitedLocation.location) == nearbyAttractionsDistance) {
+									//NearbyAttraction nearbyAttraction = new NearbyAttraction( attraction.attractionName, new Location(attraction.latitude, attraction.longitude),visitedLocation.location, nearbyAttractionsDistance, rewardsService.getRewardPoints(attraction,user ) );
+									nearbyAttractions.add(new NearbyAttraction(attraction.attractionName, new Location(attraction.latitude, attraction.longitude),visitedLocation.location, nearbyAttractionsDistance, rewardsService.getRewardPoints(attraction, user )));
+									System.out.println("AttractionName : " + attraction.attractionName + " - Distance = " + rewardsService.getDistance(attraction, visitedLocation.location) + " - NearbyDistance = " + nearbyAttractionsDistance);
+								}
+							});
+					});
+		*/
+
+		//VERSION_2
+		TreeMap<Double, NearbyAttraction> treeAttractionDistance = new TreeMap<>();
+		allAttractions.forEach(attraction -> treeAttractionDistance.put(rewardsService.getDistance(attraction, visitedLocation.location), new NearbyAttraction(attraction.attractionName, new Location(attraction.latitude, attraction.longitude), visitedLocation.location, rewardsService.getDistance(attraction, visitedLocation.location), rewardsService.getRewardPoints(attraction, user))));
+
+		nearbyAttractions = treeAttractionDistance.values().stream()
+															.limit(5)
+															.collect(Collectors.toList());
+
 		return nearbyAttractions;
 	}
 	
