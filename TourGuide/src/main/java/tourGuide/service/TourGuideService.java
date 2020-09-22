@@ -56,7 +56,19 @@ public class TourGuideService {
 			trackUserLocation(user);
 		return visitedLocation;
 	}
-	
+
+
+	public HashMap<String, Location> getAllCurrentLocations() {
+
+		HashMap<String, Location> allCurrentLocations = new HashMap<>();
+
+		List<User> allUsers = getAllUsers();
+
+		allUsers.forEach(user -> allCurrentLocations.put(user.getUserId().toString(), user.getLastVisitedLocation().location));
+
+		return allCurrentLocations;
+	}
+
 	public User getUser(String userName) {
 		return internalUserMap.get(userName);
 	}
@@ -173,5 +185,5 @@ public class TourGuideService {
 		LocalDateTime localDateTime = LocalDateTime.now().minusDays(new Random().nextInt(30));
 	    return Date.from(localDateTime.toInstant(ZoneOffset.UTC));
 	}
-	
+
 }
