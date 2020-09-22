@@ -49,6 +49,43 @@ public class TestTourGuideService {
 	}
 
 	@Test
+	public void getAllCurrentLocations() {
+		// ARRANGE
+		GpsUtil gpsUtil = new GpsUtil();
+		RewardCentral rewardCentral = new RewardCentral();
+		RewardsService rewardsService = new RewardsService(gpsUtil, rewardCentral);
+		InternalTestHelper.setInternalUserNumber(0);
+		TourGuideService tourGuideService = new TourGuideService(gpsUtil, rewardsService);
+
+		tourGuideService.tracker.stopTracking();
+
+        User user1 = new User(UUID.fromString("123e4567-e89b-42d3-a456-556642440001"), "jon1", "001", "jon1@tourGuide.com");
+        User user2 = new User(UUID.fromString("123e4567-e89b-42d3-a456-556642440002"), "jon2", "002", "jon2@tourGuide.com");
+        User user3 = new User(UUID.fromString("123e4567-e89b-42d3-a456-556642440003"), "jon3", "003", "jon3@tourGuide.com");
+		tourGuideService.addUser(user1);
+		tourGuideService.addUser(user2);
+		tourGuideService.addUser(user3);
+        Location location1 = new Location(61.218887D, -149.877502D);
+        Location location2 = new Location(62.218887D, -148.877502D);
+        Location location3 = new Location(63.218887D, -147.877502D);
+		user1.addToVisitedLocations(new VisitedLocation(user1.getUserId(), location1, new Date()));
+		user2.addToVisitedLocations(new VisitedLocation(user2.getUserId(), location2, new Date()));
+		user3.addToVisitedLocations(new VisitedLocation(user3.getUserId(), location3, new Date()));
+
+		HashMap<String, Location> allCurrentLocationsExpected = new HashMap<>();
+		allCurrentLocationsExpected.put("123e4567-e89b-42d3-a456-556642440001", location1);
+		allCurrentLocationsExpected.put("123e4567-e89b-42d3-a456-556642440002", location2);
+		allCurrentLocationsExpected.put("123e4567-e89b-42d3-a456-556642440003", location3);
+
+      	// ACT
+		HashMap<String, Location> allCurrentLocationsActual = tourGuideService.getAllCurrentLocations();
+
+		// ASSERT
+		assertEquals(allCurrentLocationsExpected, allCurrentLocationsActual);
+		//assertTrue(allCurrentLocationsExpected.equals(allCurrentLocationsActual));
+	}
+
+	@Test
 	public void getUser() {
 		// ARRANGE
 		GpsUtil gpsUtil = new GpsUtil();
