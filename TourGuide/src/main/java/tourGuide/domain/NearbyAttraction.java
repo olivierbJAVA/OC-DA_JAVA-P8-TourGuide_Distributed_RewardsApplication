@@ -1,4 +1,4 @@
-package tourGuide.attraction;
+package tourGuide.domain;
 
 import gpsUtil.location.Location;
 

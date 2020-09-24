@@ -10,6 +10,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.TimeUnit;
 
+import gpsModule.service.GpsServiceImpl;
+import gpsModule.service.IGpsService;
 import gpsUtil.location.Location;
 import org.apache.commons.lang3.time.StopWatch;
 import org.junit.Test;
@@ -18,11 +20,15 @@ import gpsUtil.GpsUtil;
 import gpsUtil.location.Attraction;
 import gpsUtil.location.VisitedLocation;
 import org.mockito.Mockito;
+import preferencesModule.service.IPreferencesService;
+import preferencesModule.service.PreferencesServiceImpl;
 import rewardCentral.RewardCentral;
+import rewardModule.service.IRewardsService;
 import tourGuide.helper.InternalTestHelper;
-import tourGuide.service.RewardsService;
+import rewardModule.service.RewardsServiceImpl;
 import tourGuide.service.TourGuideService;
-import tourGuide.user.User;
+import tourGuide.domain.User;
+import tripPricer.TripPricer;
 import utils.TourGuideTestUtil;
 
 public class TestPerformance {
@@ -57,15 +63,14 @@ public class TestPerformance {
 		// Users should be incremented up to 100,000, and test finishes within 15 minutes
 		InternalTestHelper.setInternalUserNumber(100000);
 
-		GpsUtil gpsUtil = new GpsUtil();
-		RewardCentral rewardCentral = new RewardCentral();
-
-		//RewardsService rewardsService = new RewardsService(gpsUtil, rewardCentral);
-		RewardsService mockRewardsService = Mockito.spy(new RewardsService(gpsUtil,rewardCentral ));
+		IGpsService gpsService = new GpsServiceImpl(new GpsUtil());
+		//IRewardsService rewardsService = new RewardsServiceImpl(gpsService, new RewardCentral());
+		IRewardsService mockRewardsService = Mockito.spy(new RewardsServiceImpl(gpsService, new RewardCentral() ));
+		IPreferencesService preferencesService = new PreferencesServiceImpl(new TripPricer());
 
 		doNothing().when(mockRewardsService).calculateRewards(any(User.class));
 
-		TourGuideService tourGuideService = new TourGuideService(gpsUtil, mockRewardsService);
+		TourGuideService tourGuideService = new TourGuideService(gpsService, mockRewardsService, preferencesService);
 		tourGuideService.tracker.stopTracking();
 
 		List<User> allUsers = tourGuideService.getAllUsers();
@@ -120,18 +125,19 @@ public class TestPerformance {
 		TourGuideService mockTourGuideService = Mockito.spy(new TourGuideService(mockGpsUtil,rewardsService ));
 		*/
 
-		GpsUtil gpsUtil = new GpsUtil();
-		RewardsService rewardsService = new RewardsService(gpsUtil, new RewardCentral());
+		IGpsService gpsService = new GpsServiceImpl(new GpsUtil());
+		IRewardsService rewardsService = new RewardsServiceImpl(gpsService, new RewardCentral());
+		IPreferencesService preferencesService = new PreferencesServiceImpl(new TripPricer());
 
 		VisitedLocation visitedLocationRandom = new VisitedLocation(UUID.randomUUID(), new Location(TourGuideTestUtil.generateRandomLatitude(), TourGuideTestUtil.generateRandomLongitude()), TourGuideTestUtil.getRandomTime());
 
-		TourGuideService mockTourGuideService = Mockito.spy(new TourGuideService(gpsUtil,rewardsService));
+		TourGuideService mockTourGuideService = Mockito.spy(new TourGuideService(gpsService, rewardsService, preferencesService));
 
 		doReturn(visitedLocationRandom).when(mockTourGuideService).trackUserLocation(any(User.class));
 
 		mockTourGuideService.tracker.stopTracking();
 
-		Attraction attraction = gpsUtil.getAttractions().get(0);
+		Attraction attraction = gpsService.getAttractions().get(0);
 
 		List<User> allUsers = mockTourGuideService.getAllUsers();
 
@@ -183,14 +189,10 @@ public class TestPerformance {
 		// ARRANGE
 		// Users should be incremented up to 100,000, and test finishes within 15 minutes
 		InternalTestHelper.setInternalUserNumber(100000);
-
-		GpsUtil gpsUtil = new GpsUtil();
-		RewardCentral rewardCentral = new RewardCentral();
-
-		RewardsService rewardsService = new RewardsService(gpsUtil, rewardCentral);
-
-		TourGuideService tourGuideService = new TourGuideService(gpsUtil, rewardsService);
-
+		IGpsService gpsService = new GpsServiceImpl(new GpsUtil());
+		IRewardsService rewardsService = new RewardsServiceImpl(gpsService, new RewardCentral());
+		IPreferencesService preferencesService = new PreferencesServiceImpl(new TripPricer());
+		TourGuideService tourGuideService = new TourGuideService(gpsService, rewardsService, preferencesService);
 		tourGuideService.tracker.stopTracking();
 
 		List<User> allUsers = tourGuideService.getAllUsers();
