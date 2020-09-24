@@ -83,7 +83,7 @@ public class TourGuideService {
 		allUsers.forEach(user -> allCurrentLocations.put(user.getUserId().toString(), user.getLastVisitedLocation().location));
 		return allCurrentLocations;
 	}
-
+	// Appel preferencesService.getPrice
 	public List<Provider> getTripDeals(User user) {
 		int cumulatativeRewardPoints = user.getUserRewards().stream().mapToInt(i -> i.getRewardPoints()).sum();
 		List<Provider> providers = preferencesService.getPrice(init.getTripPricerApiKey(), user.getUserId(), user.getUserPreferences().getNumberOfAdults(),
@@ -91,14 +91,14 @@ public class TourGuideService {
 		user.setTripDeals(providers);
 		return providers;
 	}
-
+	// Appel gpsService.getUserLocation
 	public VisitedLocation trackUserLocation(User user) {
 		VisitedLocation visitedLocation = gpsService.getUserLocation(user.getUserId());
 		user.addToVisitedLocations(visitedLocation);
 		//rewardsService.calculateRewards(user);
 		return visitedLocation;
 	}
-
+	// Appel gpsService.getAttractions & rewardsService.getDistance & rewardsService.getRewardPoints
 	public List<NearbyAttraction> getNearByAttractions(VisitedLocation visitedLocation, User user) {
 		List<NearbyAttraction> nearbyAttractions = new ArrayList<>();
 		List<Attraction> allAttractions = gpsService.getAttractions();
