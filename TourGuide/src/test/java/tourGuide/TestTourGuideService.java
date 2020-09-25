@@ -14,6 +14,7 @@ import org.junit.Test;
 import gpsUtil.GpsUtil;
 import gpsUtil.location.Attraction;
 import gpsUtil.location.VisitedLocation;
+import preferencesModule.domain.UserPreferences;
 import preferencesModule.service.IPreferencesService;
 import preferencesModule.service.PreferencesServiceImpl;
 import rewardCentral.RewardCentral;
@@ -310,4 +311,61 @@ public class TestTourGuideService {
 		assertEquals(5, providers.size());// initial wrong = 10
 	}
 
+	@Test
+	public void getUserPreferences() {
+		// ARRANGE
+		InternalTestHelper.setInternalUserNumber(0);
+		IGpsService gpsService = new GpsServiceImpl(new GpsUtil());
+		IRewardsService rewardsService = new RewardsServiceImpl(gpsService, new RewardCentral());
+		IPreferencesService preferencesService = new PreferencesServiceImpl(new TripPricer());
+		TourGuideService tourGuideService = new TourGuideService(gpsService, rewardsService, preferencesService);
+		tourGuideService.tracker.stopTracking();
+
+		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourGuide.com");
+		UserPreferences userPreferences = new UserPreferences();
+		userPreferences.setAttractionProximity(1000);
+		userPreferences.setCurrency("USD");
+		userPreferences.setLowerPricePoint(0D);
+		userPreferences.setHighPricePoint(1000000D);
+		userPreferences.setTripDuration(5);
+		userPreferences.setTicketQuantity(3);
+		userPreferences.setNumberOfAdults(2);
+		userPreferences.setNumberOfChildren(1);
+
+		user.setUserPreferences(userPreferences);
+
+		// ACT
+		UserPreferences userPreferencesRetrieved = tourGuideService.getUserPreferences(user);
+
+		// ASSERT
+		assertEquals(userPreferences, userPreferencesRetrieved);
+	}
+
+	@Test
+	public void postUserPreferences() {
+		// ARRANGE
+		InternalTestHelper.setInternalUserNumber(0);
+		IGpsService gpsService = new GpsServiceImpl(new GpsUtil());
+		IRewardsService rewardsService = new RewardsServiceImpl(gpsService, new RewardCentral());
+		IPreferencesService preferencesService = new PreferencesServiceImpl(new TripPricer());
+		TourGuideService tourGuideService = new TourGuideService(gpsService, rewardsService, preferencesService);
+		tourGuideService.tracker.stopTracking();
+
+		User user = new User(UUID.randomUUID(), "jon", "000", "jon@tourGuide.com");
+		UserPreferences userPreferences = new UserPreferences();
+		userPreferences.setAttractionProximity(1000);
+		userPreferences.setCurrency("USD");
+		userPreferences.setLowerPricePoint(0D);
+		userPreferences.setHighPricePoint(1000000D);
+		userPreferences.setTripDuration(5);
+		userPreferences.setTicketQuantity(3);
+		userPreferences.setNumberOfAdults(2);
+		userPreferences.setNumberOfChildren(1);
+
+		// ACT
+		tourGuideService.postUserPreferences(user, userPreferences);
+
+		// ASSERT
+		assertEquals(userPreferences, user.getUserPreferences());
+	}
 }
