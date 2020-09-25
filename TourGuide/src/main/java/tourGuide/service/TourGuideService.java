@@ -116,19 +116,7 @@ public class TourGuideService {
 	}
 
 	public UserPreferences postUserPreferences(User user, UserPreferences userPreferences) {
-		UserPreferences preferences = new UserPreferences();
-		preferences.setAttractionProximity(userPreferences.getAttractionProximity());
-		preferences.setTripDuration(userPreferences.getTripDuration());
-		preferences.setTicketQuantity(userPreferences.getTicketQuantity());
-		preferences.setNumberOfAdults(userPreferences.getNumberOfAdults());
-		preferences.setNumberOfChildren(userPreferences.getNumberOfChildren());
-
-		Money lowerPricePoint = Money.of(userPreferences.getLowerPricePoint().getNumber(),"USD");
-		Money highPricePoint = Money.of(userPreferences.getHighPricePoint().getNumber(),"USD");
-		preferences.setLowerPricePoint(lowerPricePoint);
-		preferences.setHighPricePoint(highPricePoint);
-
-		user.setUserPreferences(preferences);
+		user.setUserPreferences(userPreferences);
 		return userPreferences;
 	}
 

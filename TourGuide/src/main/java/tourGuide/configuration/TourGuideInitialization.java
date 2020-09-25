@@ -4,6 +4,7 @@ import gpsUtil.location.Location;
 import gpsUtil.location.VisitedLocation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import preferencesModule.domain.UserPreferences;
 import tourGuide.domain.User;
 import tourGuide.helper.InternalTestHelper;
 
@@ -40,6 +41,10 @@ public class TourGuideInitialization {
             String email = userName + "@tourGuide.com";
             User user = new User(UUID.randomUUID(), userName, phone, email);
             generateUserLocationHistory(user);
+
+            // Added for userPreferences initialization
+            UserPreferences userPreferences = new UserPreferences();
+            user.setUserPreferences(userPreferences);
 
             internalUserMap.put(userName, user);
         });

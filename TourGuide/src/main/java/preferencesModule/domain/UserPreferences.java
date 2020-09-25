@@ -9,9 +9,14 @@ import org.javamoney.moneta.Money;
 public class UserPreferences {
 	
 	private int attractionProximity = Integer.MAX_VALUE;
+	/*
 	private CurrencyUnit currency = Monetary.getCurrency("USD");
 	private Money lowerPricePoint = Money.of(0, currency);
 	private Money highPricePoint = Money.of(Integer.MAX_VALUE, currency);
+	*/
+	private String currency = "USD";
+	private Double lowerPricePoint = 0D;
+	private Double highPricePoint = 1000000D;
 	private int tripDuration = 1;
 	private int ticketQuantity = 1;
 	private int numberOfAdults = 1;
@@ -27,7 +32,8 @@ public class UserPreferences {
 	public int getAttractionProximity() {
 		return attractionProximity;
 	}
-	
+
+	/*
 	public Money getLowerPricePoint() {
 		return lowerPricePoint;
 	}
@@ -43,7 +49,32 @@ public class UserPreferences {
 	public void setHighPricePoint(Money highPricePoint) {
 		this.highPricePoint = highPricePoint;
 	}
-	
+	*/
+	// Added getter and setter for CurrencyUnit
+	public String getCurrency() {
+		return currency;
+	}
+
+	public void setCurrency(String currency) {
+		this.currency = currency;
+	}
+
+	public Double getLowerPricePoint() {
+		return lowerPricePoint;
+	}
+
+	public void setLowerPricePoint(Double lowerPricePoint) {
+		this.lowerPricePoint = lowerPricePoint;
+	}
+
+	public Double getHighPricePoint() {
+		return highPricePoint;
+	}
+
+	public void setHighPricePoint(Double highPricePoint) {
+		this.highPricePoint = highPricePoint;
+	}
+
 	public int getTripDuration() {
 		return tripDuration;
 	}
