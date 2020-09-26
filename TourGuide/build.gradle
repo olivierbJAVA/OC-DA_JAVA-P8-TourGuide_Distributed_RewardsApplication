@@ -32,8 +32,6 @@ targetCompatibility = 1.11
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
-    implementation group: 'org.javamoney', name: 'moneta', version: '1.3'
-    implementation group: 'com.jsoniter', name: 'jsoniter', version: '0.9.23'
 
     implementation(name:'gpsUtil', ext:'jar')
     implementation(name:'RewardCentral', ext:'jar')
