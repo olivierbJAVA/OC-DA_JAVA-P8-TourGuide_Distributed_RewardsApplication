@@ -14,6 +14,7 @@ import gpsModule.service.GpsServiceImpl;
 import gpsModule.service.IGpsService;
 import gpsUtil.location.Location;
 import org.apache.commons.lang3.time.StopWatch;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import gpsUtil.GpsUtil;
@@ -53,7 +54,7 @@ public class TestPerformance {
 	 *          assertTrue(TimeUnit.MINUTES.toSeconds(20) >= TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()));
 	 */
 	
-	//@Ignore
+	@Ignore
 	@Test
 	public void highVolumeTrackLocation() {
 		//Added to fix NumberFormatException due to decimal number separator
@@ -108,7 +109,7 @@ public class TestPerformance {
 		assertTrue(result);
 	}
 	
-	//@Ignore
+	@Ignore
 	@Test
 	public void highVolumeGetRewards() {
 		//Added to fix NumberFormatException due to decimal number separator
@@ -180,7 +181,7 @@ public class TestPerformance {
 	}
 
 	// New test added : highVolumeTrackLocationAndGetRewards in actual conditions
-	//@Ignore
+	@Ignore
 	@Test
 	public void highVolumeTrackLocationAndGetRewards() {
 		//Added to fix NumberFormatException due to decimal number separator
