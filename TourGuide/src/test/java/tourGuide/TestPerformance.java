@@ -54,7 +54,7 @@ public class TestPerformance {
 	 *          assertTrue(TimeUnit.MINUTES.toSeconds(20) >= TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()));
 	 */
 	
-	@Ignore
+	//@Ignore
 	@Test
 	public void highVolumeTrackLocation() {
 		//Added to fix NumberFormatException due to decimal number separator
@@ -62,7 +62,7 @@ public class TestPerformance {
 
 		// ARRANGE
 		// Users should be incremented up to 100,000, and test finishes within 15 minutes
-		InternalTestHelper.setInternalUserNumber(100000);
+		InternalTestHelper.setInternalUserNumber(100);
 
 		IGpsService gpsService = new GpsServiceImpl(new GpsUtil());
 		//IRewardsService rewardsService = new RewardsServiceImpl(gpsService, new RewardCentral());
@@ -109,7 +109,7 @@ public class TestPerformance {
 		assertTrue(result);
 	}
 	
-	@Ignore
+	//@Ignore
 	@Test
 	public void highVolumeGetRewards() {
 		//Added to fix NumberFormatException due to decimal number separator
@@ -117,7 +117,7 @@ public class TestPerformance {
 
 		// ARRANGE
 		// Users should be incremented up to 100,000, and test finishes within 20 minutes
-		InternalTestHelper.setInternalUserNumber(100000);
+		InternalTestHelper.setInternalUserNumber(100);
 
 		/*
 		GpsUtil mockGpsUtil =  Mockito.spy(new GpsUtil());
@@ -181,7 +181,7 @@ public class TestPerformance {
 	}
 
 	// New test added : highVolumeTrackLocationAndGetRewards in actual conditions
-	@Ignore
+	//@Ignore
 	@Test
 	public void highVolumeTrackLocationAndGetRewards() {
 		//Added to fix NumberFormatException due to decimal number separator
@@ -189,7 +189,7 @@ public class TestPerformance {
 
 		// ARRANGE
 		// Users should be incremented up to 100,000, and test finishes within 15 minutes
-		InternalTestHelper.setInternalUserNumber(100000);
+		InternalTestHelper.setInternalUserNumber(100);
 		IGpsService gpsService = new GpsServiceImpl(new GpsUtil());
 		IRewardsService rewardsService = new RewardsServiceImpl(gpsService, new RewardCentral());
 		IPreferencesService preferencesService = new PreferencesServiceImpl(new TripPricer());
