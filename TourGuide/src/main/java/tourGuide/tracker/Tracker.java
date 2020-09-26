@@ -61,8 +61,6 @@ public class Tracker extends Thread {
 			//Wait maximum between Timeout and forkJoinPool has finished tasks
 			forkJoinPool.awaitQuiescence(10,TimeUnit.MINUTES);
 
-			//ForkJoinPool.commonPool().awaitQuiescence(10,TimeUnit.MINUTES);
-
 			stopWatch.stop();
 			logger.debug("Tracker Time Elapsed: " + TimeUnit.MILLISECONDS.toSeconds(stopWatch.getTime()) + " seconds."); 
 			stopWatch.reset();

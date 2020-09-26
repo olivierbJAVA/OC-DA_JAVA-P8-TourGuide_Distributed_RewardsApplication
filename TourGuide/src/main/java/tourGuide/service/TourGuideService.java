@@ -29,7 +29,6 @@ public class TourGuideService {
 	private final IGpsService gpsService;
 	private final IRewardsService rewardsService;
 	private final IPreferencesService preferencesService;
-	//private final TripPricer tripPricer = new TripPricer();
 	public final Tracker tracker;
 	boolean testMode = true;
 
