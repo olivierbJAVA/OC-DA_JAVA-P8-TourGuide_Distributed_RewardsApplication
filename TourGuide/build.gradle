@@ -33,9 +33,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-actuator")
 
-    implementation(name:'gpsUtil', ext:'jar')
     implementation(name:'RewardCentral', ext:'jar')
-    implementation(name:'TripPricer', ext:'jar')
 
     testImplementation("junit:junit")
     testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '2.1.6.RELEASE'
