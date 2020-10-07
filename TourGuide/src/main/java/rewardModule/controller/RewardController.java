@@ -15,7 +15,7 @@ public class RewardController {
     private Logger logger = LoggerFactory.getLogger(RewardController.class);
 
     @Autowired
-    IRewardsService rewardsService;
+    private IRewardsService rewardsService;
 
     @GetMapping("/getRewardPoints")
     public int getRewardPoints(@RequestParam String attractionId, @RequestParam String userId) {
