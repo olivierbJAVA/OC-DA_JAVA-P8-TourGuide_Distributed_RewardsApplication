@@ -1,4 +1,4 @@
-# TourGuide - Preferences Service
+# TourGuide - Rewards Service
 Welcome to TourGuide !
 
 - TourGuide is part of the TripMaster company applications portfolio
@@ -85,8 +85,8 @@ In this file, you can manage the logging level and the sever listening port
 
 The following EndPoints are exposed by the GPS Service :
 
-- GET  <http://localhost:8082/getRewardPoints> : provide the location (being composed of latitude and longitude) of a user
->Request Parameters : *attractionId* = id of attraction, *userId* = id of the user
+- GET  <http://localhost:8082/getRewardPoints> : provide the number of rewards points earned by a user for an attraction
+>Request Parameters : *attractionId* = id of the attraction, *userId* = id of the user
 
 ### Docker container deployment
 
