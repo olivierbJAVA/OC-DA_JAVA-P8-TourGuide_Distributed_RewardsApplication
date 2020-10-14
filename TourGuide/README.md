@@ -83,7 +83,7 @@ In this file, you can manage the logging level and the sever listening port
 
 ### Endpoints
 
-The following EndPoints are exposed by the GPS Service :
+The following EndPoint is exposed by the Rewards Service :
 
 - GET  <http://localhost:8082/getRewardPoints> : provide the number of rewards points earned by a user for an attraction
 >Request Parameters : *attractionId* = id of the attraction, *userId* = id of the user
