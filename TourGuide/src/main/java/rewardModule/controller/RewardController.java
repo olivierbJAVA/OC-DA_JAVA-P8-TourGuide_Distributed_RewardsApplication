@@ -10,7 +10,7 @@ import rewardModule.service.IRewardsService;
 import java.util.UUID;
 
 /**
- * Controller in charge of managing the endpoint for the Rewards service.
+ * Controller in charge of managing the endpoints for the Rewards service.
  */
 @RestController
 public class RewardController {
