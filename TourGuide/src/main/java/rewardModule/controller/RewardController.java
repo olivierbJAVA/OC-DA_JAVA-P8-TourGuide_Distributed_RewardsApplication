@@ -9,6 +9,9 @@ import rewardModule.service.IRewardsService;
 
 import java.util.UUID;
 
+/**
+ * Controller in charge of managing the endpoint for the Rewards service.
+ */
 @RestController
 public class RewardController {
     private Logger logger = LoggerFactory.getLogger(RewardController.class);
@@ -19,6 +22,13 @@ public class RewardController {
         this.rewardsService = rewardsService;
     }
 
+    /**
+     * Method managing the GET "/getRewardPoints" endpoint HTTP request to get the rewards points for an attraction and a given user.
+     *
+     * @param attractionId The id of the attraction
+     * @param userId The id of the user
+     * @return The number of rewards points earned
+     */
     @GetMapping("/getRewardPoints")
     public int getRewardPoints(@RequestParam String attractionId, @RequestParam String userId) {
         logger.debug("Request getRewardPoints");
