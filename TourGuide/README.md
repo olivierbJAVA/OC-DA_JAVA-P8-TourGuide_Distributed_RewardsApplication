@@ -2,7 +2,7 @@
 Welcome to TourGuide !
 
 - TourGuide is part of the TripMaster company applications portfolio
-- TourGuide is a web application which goal is help users to travel
+- TourGuide is a web application which goal is to help users to travel
 - The application is working but with some issues
 
 The goal of this project is to : 
